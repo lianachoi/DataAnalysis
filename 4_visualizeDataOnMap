@@ -1,0 +1,21 @@
+import pandas as pd
+import folium
+
+location_data = pd.read_excel('./5_hotplaceslocations_merged.xlsx')
+
+Hanla = [33.362500, 126.533694]
+map_jeju = folium.Map(location=Hanla, zoom_start=11)
+
+for i in range(len(location_data)):
+    name = location_data['카카오위치명'][i]
+    count = location_data['place'][i]
+    size = int(count)*2
+    long = float(location_data['위도'][i])
+    lat = float(location_data['경도'][i])
+    folium.CircleMarker((long,lat), radius=size, color='blue', popup=name).add_to(map_jeju)
+    folium.Marker(
+        location=[long,lat],
+        popup=name,
+    ).add_to(map_jeju)
+
+map_jeju.save('./6_hotplacesmap.html')
