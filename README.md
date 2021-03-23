@@ -20,3 +20,4 @@ Data analysis with Python
 * API 기능 확인: 제품> 지도/로컬> 문서보기
 * 로컬 API 개발 가이드: https://developers.kakao.com/docs/latest/ko/local/dev-guide
 
+※참고: 직장인을 위한 데이터 분석 실무 with 파이썬
