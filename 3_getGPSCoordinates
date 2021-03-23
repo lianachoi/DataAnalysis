@@ -1,0 +1,55 @@
+import requests
+import time
+import pandas as pd
+
+
+def find_places(searching):
+    url = 'https://dapi.kakao.com/v2/local/search/keyword.json?query={}'.format(searching)
+    headers = {
+        "Authorization": "KakaoAK [Kakao API Key]"
+    }
+    places = requests.get(url, headers = headers).json()['documents']
+
+    place = places[0]
+    name = place['place_name']
+    x = place['x']
+    y = place['y']
+    data = [name, x, y, searching]
+
+    return data
+
+raw_total = pd.read_excel('./2_crawling_raw.xlsx')
+location_counts = raw_total['place'].value_counts()
+location_counts_df = pd.DataFrame(location_counts)
+location_counts_df.to_excel('./3_places.xlsx')
+
+locations = list(location_counts.index)
+locations_info = [ ]
+
+for location in locations:
+    try:
+        data = find_places(location)
+        locations_info.append(data)
+        time.sleep(0.5)
+    except:
+        pass
+# print(locations_info)
+
+locations_info_df = pd.DataFrame(locations_info)
+locations_info_df.columns = ['카카오위치명', '경도', '위도', '인스타위치명']
+locations_info_df.to_excel('./4_hotplacelocations.xlsx', index=False)
+
+location_counts_df = pd.read_excel('./3_places.xlsx', index_col=0)
+locations_info_df = pd.read_excel('./4_hotplacelocations.xlsx')
+
+location_data = pd.merge(locations_info_df, location_counts_df,
+                         how = 'inner', left_on='인스타위치명', right_index=True)
+
+# print(location_data)
+
+location_data = location_data.pivot_table(
+    index=['카카오위치명', '경도', '위도'],
+    values='place',
+    aggfunc='sum'
+)
+location_data.to_excel('./5_hotplaceslocations_merged.xlsx')
