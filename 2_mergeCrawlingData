@@ -1,0 +1,19 @@
+import pandas as pd
+
+jeju_insta_df = pd.DataFrame([])
+
+folder = './'
+f_list = ['1_crawling_jejudoMatJib.xlsx',
+          '1_crawling_jejuMatJib.xlsx',
+          '1_crawling_jejudoYeoHang.xlsx',
+          '1_crawling_jejuYeoHang.xlsx']
+
+for frame in f_list:
+    fpath = folder + frame
+    temp = pd.read_excel(fpath)
+    jeju_insta_df = jeju_insta_df.append(temp)
+
+jeju_insta_df.columns = ['content','data','like','place','tags']
+
+jeju_insta_df.drop_duplicates(subset = ['content'], inplace = True)
+jeju_insta_df.to_excel('./2_crawling_raw.xlsx', index = False)
